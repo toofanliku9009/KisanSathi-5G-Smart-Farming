@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KisanSathi – SoilSense AI prototype</title>
+<style>
+:root{--bg:#f4f7f2;--card:#fff;--ink:#1f2937;--mut:#5b6472;--line:#d5deea;--g:#2e7d32;--navy:#1f3c88;--me:#dcf8c6;--warn:#fff3e0;--wl:#b45f06;--chat:#efeae2;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10160f;--card:#1a2219;--ink:#e8ede6;--mut:#a3adb8;--line:#33402f;--g:#6fcf75;--navy:#8fb0ff;--me:#1f4d2a;--warn:#3a2a12;--wl:#ffb15c;--chat:#141b13;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10160f;--card:#1a2219;--ink:#e8ede6;--mut:#a3adb8;--line:#33402f;--g:#6fcf75;--navy:#8fb0ff;--me:#1f4d2a;--warn:#3a2a12;--wl:#ffb15c;--chat:#141b13;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header.top{padding:14px 16px 4px;max-width:1000px;margin:0 auto}
+h1{margin:0;font-size:20px;color:var(--navy)}
+.sub{color:var(--mut);font-size:13px;margin-top:2px}
+.wrap{max-width:1000px;margin:0 auto;padding:10px 16px 28px;display:grid;gap:16px;grid-template-columns:minmax(0,430px) minmax(0,1fr)}
+@media(max-width:820px){.wrap{grid-template-columns:minmax(0,1fr)}}
+.phone{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;height:640px}
+.ph{background:var(--g);color:#fff;padding:10px 12px;display:flex;align-items:center;gap:10px}
+:root[data-theme="dark"] .ph,:root:not([data-theme="light"]) .ph{--x:0}
+.ph b{flex:1}
+.lang button{border:1px solid #ffffff88;background:transparent;color:#fff;border-radius:12px;padding:2px 8px;margin-left:4px;cursor:pointer;font-size:13px}
+.lang button.on{background:#fff;color:#1b5e20}
+#msgs{flex:1;overflow-y:auto;background:var(--chat);padding:10px;display:flex;flex-direction:column;gap:8px}
+.m{max-width:88%;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:14px}
+.m.me{align-self:flex-end;background:var(--me)}
+.m img{max-width:100%;border-radius:8px;display:block;margin-bottom:4px}
+.m .t{font-weight:700}
+.m .gate{background:var(--warn);color:var(--ink);border-left:4px solid var(--wl);padding:6px 8px;border-radius:6px;margin:4px 0}
+.acts{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.acts button,.chips button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:4px 10px;cursor:pointer;font-size:13px}
+.samples{padding:6px 8px;border-top:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;font-size:12px;align-items:center;color:var(--mut)}
+.samples button{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:3px 9px;cursor:pointer}
+.inp{display:flex;gap:6px;padding:8px;border-top:1px solid var(--line)}
+.inp input[type=text]{flex:1;min-width:0;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:18px;padding:8px 12px;font-size:14px}
+.inp button,.inp label{border:0;background:var(--g);color:#fff;border-radius:50%;width:38px;height:38px;cursor:pointer;display:grid;place-items:center;font-size:16px}
+:root[data-theme="dark"] .inp button,:root[data-theme="dark"] .inp label{color:#0b1a0c}
+.panel{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.card h2{margin:0 0 8px;font-size:15px;color:var(--navy)}
+.row{display:flex;align-items:center;gap:10px;margin:6px 0;flex-wrap:wrap}
+select{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:5px 8px;font-size:14px}
+input[type=range]{flex:1;min-width:120px}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{display:flex;gap:8px;padding:5px 0;color:var(--mut);font-size:13px;border-bottom:1px dashed var(--line)}
+.steps li:last-child{border:0}
+.steps li i{font-style:normal;width:20px;text-align:center}
+.steps li.on{color:var(--ink);font-weight:600}
+.steps li.gate.on{color:var(--wl)}
+.note{font-size:12px;color:var(--mut)}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}.bar span{display:block;height:100%;background:var(--g)}
+</style></head><body>
+<header class="top"><h1>KisanSathi – SoilSense AI <span class="note">(working prototype)</span></h1>
+<div class="sub">Send a rice-leaf photo, get screening, a confidence check, weather-timed advice and a voice reply.</div></header>
+<div class="wrap">
+<section class="phone" aria-label="KisanSathi chat">
+ <div class="ph"><span style="font-size:20px">🌾</span><b>KisanSathi</b><span class="lang" id="lang"></span></div>
+ <div id="msgs"></div>
+ <div class="samples"><span>Try sample:</span><span id="smp"></span></div>
+ <div class="inp">
+  <label title="Upload leaf photo">📷<input id="file" type="file" accept="image/*" capture="environment" hidden></label>
+  <input id="txt" type="text" placeholder="Ask about rain, spray, water…" aria-label="Message">
+  <button id="mic" title="Voice input" aria-label="Voice input">🎤</button>
+  <button id="send" aria-label="Send">➤</button>
+ </div>
+</section>
+<aside class="panel">
+ <div class="card"><h2>Field context</h2>
+  <div class="row"><label for="crop">Crop</label><select id="crop"><option>Rice (3 diseases)</option><option disabled>Tomato – next phase</option><option disabled>Chilli – next phase</option></select></div>
+  <div class="row"><label for="wx">Weather (stands in for Open-Meteo)</label><select id="wx">
+   <option value="clear">Clear and calm</option><option value="pm" selected>Rain after 4 pm</option><option value="now">Heavy rain now</option><option value="wind">Clear but windy</option></select></div>
+  <div class="row"><label><input type="checkbox" id="ss"> SoilSense node connected</label></div>
+  <div class="row"><label for="sm">Soil moisture</label><input type="range" id="sm" min="5" max="95" value="45"><b id="smv">45%</b></div>
+  <div class="note">Weather and sensor values are simulated here. In the pilot they come from the weather API and an ESP32 moisture probe.</div>
+ </div>
+ <div class="card"><h2>Pipeline trace</h2>
+  <ul class="steps" id="steps"></ul>
+  <div class="row" style="margin-top:8px"><span class="note">Last confidence</span><div class="bar" style="flex:1"><span id="cb" style="width:0"></span></div><b id="cv">–</b></div>
+  <div class="row"><label for="th">Confidence gate</label><input type="range" id="th" min="50" max="90" value="70"><b id="thv">70%</b></div>
+ </div>
+ <div class="card"><h2>What is real here</h2>
+  <div class="note">Real: chat flow, confidence gate, rule-based advice, voice playback, expert referral. Prototype stand-in: the leaf screening uses a simple colour-pattern check, to be replaced by the MobileNet model trained on field photos. Odia text needs review by a native speaker. Screening only; not a final diagnosis.</div>
+ </div>
+</aside></div>
+<script>
+const $=id=>document.getElementById(id);
+const L={en:{n:"EN",v:"en-IN"},hi:{n:"हिं",v:"hi-IN"},or:{n:"ଓଡ଼ି",v:"or-IN"}};
+let lang="en";
+const D={blast:{en:"Rice blast",hi:"ब्लास्ट (झोंका)",or:"ବ୍ଲାଷ୍ଟ (ଝୁଲସା)"},brown:{en:"Brown spot",hi:"भूरा धब्बा",or:"ବାଦାମୀ ଦାଗ"},blb:{en:"Bacterial leaf blight",hi:"जीवाणु पत्ती झुलसा",or:"ଜୀବାଣୁ ପତ୍ର ଝଲସା"},healthy:{en:"Healthy leaf",hi:"स्वस्थ पत्ती",or:"ସୁସ୍ଥ ପତ୍ର"}};
+const ADV={
+blast:{en:"Fungal disease that grows in humid weather. Remove badly affected leaves, avoid extra nitrogen, and ask your KVK for the approved fungicide and dose.",hi:"यह फफूंद रोग नमी वाले मौसम में बढ़ता है। ज़्यादा प्रभावित पत्तियाँ हटाएँ, अतिरिक्त नाइट्रोजन न दें, मान्य दवा और मात्रा के लिए KVK से पूछें।",or:"ଏହା ଆର୍ଦ୍ର ପାଗରେ ବଢ଼ୁଥିବା ଫୁଙ୍ଗସ୍ ରୋଗ। ଅଧିକ ସଂକ୍ରମିତ ପତ୍ର କାଢ଼ିଦିଅନ୍ତୁ, ଅତିରିକ୍ତ ନାଇଟ୍ରୋଜେନ ଦିଅନ୍ତୁ ନାହିଁ, ଅନୁମୋଦିତ ଔଷଧ ଓ ମାତ୍ରା ପାଇଁ KVK କୁ ପଚାରନ୍ତୁ।"},
+brown:{en:"Often seen in weak or nutrient-poor crops. Balance nutrition, keep the field weed-free, and check the state advisory for spray guidance.",hi:"यह अक्सर कमज़ोर या पोषक तत्वों की कमी वाली फसल में होता है। संतुलित खाद दें, खेत खरपतवार-मुक्त रखें, और राज्य कृषि सलाह देखें।",or:"ଏହା ପ୍ରାୟତଃ ଦୁର୍ବଳ କିମ୍ବା ପୋଷକ ଅଭାବ ଥିବା ଫସଲରେ ହୁଏ। ସନ୍ତୁଳିତ ସାର ଦିଅନ୍ତୁ, ଖେତ ତୃଣମୁକ୍ତ ରଖନ୍ତୁ, ରାଜ୍ୟ କୃଷି ପରାମର୍ଶ ଦେଖନ୍ତୁ।"},
+blb:{en:"Bacterial disease spread by water. Drain the field if possible, avoid extra nitrogen, do not let water flow between fields, and consult your KVK.",hi:"यह जीवाणु रोग पानी से फैलता है। हो सके तो खेत का पानी निकालें, अतिरिक्त नाइट्रोजन न दें, एक खेत का पानी दूसरे में न जाने दें, और KVK से सलाह लें।",or:"ଏହା ପାଣିରେ ବ୍ୟାପୁଥିବା ଜୀବାଣୁ ରୋଗ। ସମ୍ଭବ ହେଲେ ଖେତର ପାଣି ବାହାର କରନ୍ତୁ, ଅତିରିକ୍ତ ନାଇଟ୍ରୋଜେନ ଦିଅନ୍ତୁ ନାହିଁ, ଏକ ଖେତରୁ ଅନ୍ୟ ଖେତକୁ ପାଣି ଛାଡ଼ନ୍ତୁ ନାହିଁ, KVK ପରାମର୍ଶ ନିଅନ୍ତୁ।"},
+healthy:{en:"No clear disease signs. Keep checking leaves every 2–3 days.",hi:"रोग के स्पष्ट लक्षण नहीं हैं। हर 2–3 दिन पत्तियाँ जाँचते रहें।",or:"ରୋଗର ସ୍ପଷ୍ଟ ଲକ୍ଷଣ ନାହିଁ। ପ୍ରତି ୨–୩ ଦିନରେ ପତ୍ର ଯାଞ୍ଚ କରନ୍ତୁ।"}};
+const T={
+greet:{en:"Namaste! Send a photo of a rice leaf, or ask about rain, spraying or irrigation.",hi:"नमस्ते! धान की पत्ती की फ़ोटो भेजें, या बारिश, छिड़काव या सिंचाई के बारे में पूछें।",or:"ନମସ୍କାର! ଧାନ ପତ୍ରର ଫଟୋ ପଠାନ୍ତୁ, କିମ୍ବା ବର୍ଷା, ସ୍ପ୍ରେ ବା ଜଳସେଚନ ବିଷୟରେ ପଚାରନ୍ତୁ।"},
+likely:{en:"Likely: {d} (confidence {c}%)",hi:"संभावित रोग: {d} (विश्वास {c}%)",or:"ସମ୍ଭାବ୍ୟ ରୋଗ: {d} (ଭରସା {c}%)"},
+low:{en:"I am not sure (confidence {c}%). Send another photo: close to the leaf, in daylight, one leaf in focus. Or call an expert.",hi:"मुझे पक्का नहीं है (विश्वास {c}%)। पत्ती के पास से, दिन की रोशनी में दूसरी फ़ोटो भेजें, या विशेषज्ञ को बुलाएँ।",or:"ମୁଁ ନିଶ୍ଚିତ ନୁହେଁ (ଭରସା {c}%)। ପତ୍ରର ପାଖରୁ, ଦିନ ଆଲୁଅରେ ଆଉ ଏକ ଫଟୋ ପଠାନ୍ତୁ, ନଚେତ୍ ବିଶେଷଜ୍ଞଙ୍କୁ ଡାକନ୍ତୁ।"},
+noSpray:{en:"Do not spray today: rain is likely.",hi:"आज छिड़काव न करें: बारिश की संभावना है।",or:"ଆଜି ସ୍ପ୍ରେ କରନ୍ତୁ ନାହିଁ: ବର୍ଷା ହେବାର ସମ୍ଭାବନା ଅଛି।"},
+wind:{en:"Strong wind: spray would drift, do not spray now.",hi:"तेज़ हवा है, छिड़काव न करें।",or:"ପବନ ଜୋରରେ ବହୁଛି, ସ୍ପ୍ରେ କରନ୍ତୁ ନାହିଁ।"},
+win:{en:"Best spray window: {w}. Product and dose: as per the state advisory.",hi:"छिड़काव का सही समय: {w}। दवा और मात्रा राज्य कृषि सलाह के अनुसार।",or:"ସ୍ପ୍ରେ ପାଇଁ ଠିକ୍ ସମୟ: {w}। ଔଷଧ ଓ ମାତ୍ରା ରାଜ୍ୟ କୃଷି ପରାମର୍ଶ ଅନୁସାରେ।"},
+w1:{en:"today 6–9 am",hi:"आज सुबह 6–9 बजे",or:"ଆଜି ସକାଳ ୬–୯ଟା"},w2:{en:"tomorrow 6–9 am",hi:"कल सुबह 6–9 बजे",or:"କାଲି ସକାଳ ୬–୯ଟା"},
+dry:{en:"Soil is dry ({m}%): give light irrigation.",hi:"मिट्टी में नमी कम ({m}%) है: हल्की सिंचाई करें।",or:"ମାଟିରେ ଓଦା କମ୍ ({m}%): ହାଲୁକା ଜଳସେଚନ କରନ୍ତୁ।"},
+wet:{en:"Soil is very wet ({m}%): do not irrigate now.",hi:"मिट्टी में नमी अधिक ({m}%) है: अभी सिंचाई न करें।",or:"ମାଟିରେ ଓଦା ଅଧିକ ({m}%): ଏବେ ଜଳସେଚନ କରନ୍ତୁ ନାହିଁ।"},
+okm:{en:"Soil moisture is fine ({m}%).",hi:"मिट्टी की नमी ठीक है ({m}%)।",or:"ମାଟିର ଓଦା ଠିକ୍ ଅଛି ({m}%)।"},
+hint:{en:"Send a leaf photo, or ask about rain, spraying or irrigation.",hi:"पत्ती की फ़ोटो भेजें, या बारिश, छिड़काव, सिंचाई के बारे में पूछें।",or:"ପତ୍ରର ଫଟୋ ପଠାନ୍ତୁ, କିମ୍ବା ବର୍ଷା, ସ୍ପ୍ରେ, ଜଳସେଚନ ବିଷୟରେ ପଚାରନ୍ତୁ।"},
+expert:{en:"Call expert",hi:"विशेषज्ञ बुलाएँ",or:"ବିଶେଷଜ୍ଞ ଡାକନ୍ତୁ"},
+sent:{en:"Case {id} forwarded to the KVK / agriculture officer desk with your photo and location (simulated). You will get a reply here.",hi:"केस {id} फ़ोटो और स्थान के साथ KVK / कृषि अधिकारी को भेजा गया (सिम्युलेटेड)। जवाब यहीं मिलेगा।",or:"କେସ୍ {id} ଫଟୋ ଓ ସ୍ଥାନ ସହ KVK / କୃଷି ଅଧିକାରୀଙ୍କୁ ପଠାଯାଇଛି (ସିମୁଲେଟେଡ୍)। ଉତ୍ତର ଏଠାରେ ମିଳିବ।"}};
+const W={clear:{rain:10,wind:8},pm:{rain:80,wind:10},now:{rain:95,wind:12},wind:{rain:10,wind:28}};
+const tr=(k,o={})=>{let s=T[k][lang];for(const x in o)s=s.replace("{"+x+"}",o[x]);return s};
+const STEPS=[["📱","Farmer sends photo / voice"],["⚙️","Backend: farm profile + crop"],["🧠","Disease screening"],["🚦","Confidence gate","gate"],["📋","Advice engine: guidelines + weather + soil"],["🔊","Voice + text reply"]];
+const sl=$("steps");STEPS.forEach((s,i)=>{const li=document.createElement("li");if(s[2])li.className=s[2];li.id="s"+i;li.innerHTML="<i>"+s[0]+"</i><span>"+s[1]+"</span>";sl.appendChild(li)});
+const mark=(i,on)=>$("s"+i).classList.toggle("on",on);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function add(html,me,img){const d=document.createElement("div");d.className="m"+(me?" me":"");if(img){const im=new Image();im.src=img;d.appendChild(im)}const s=document.createElement("div");s.innerHTML=html;d.appendChild(s);$("msgs").appendChild(d);$("msgs").scrollTop=1e9;return d}
+function speak(t){if(!("speechSynthesis" in window)){toast("Voice not supported on this browser");return}
+ speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang=L[lang].v;const vs=speechSynthesis.getVoices();
+ if(vs.length&&!vs.some(v=>v.lang.replace("_","-").toLowerCase().startsWith(L[lang].v.slice(0,2)))){toast("No "+L[lang].n+" voice on this device. Text shown; the pilot will use Bhashini speech.");return}
+ speechSynthesis.speak(u)}
+function toast(t){add("<span class=note>"+t+"</span>",false)}
+function bot(title,lines,gate,speakText,expert){let h=title?"<div class=t>"+title+"</div>":"";
+ lines.forEach(l=>h+="<div>"+l+"</div>");if(gate)h=h.replace(/^/,"")+"";
+ const d=add(h,false);const a=document.createElement("div");a.className="acts";
+ const p=document.createElement("button");p.textContent="🔊";p.onclick=()=>speak(speakText);a.appendChild(p);
+ if(expert){const e=document.createElement("button");e.textContent="📞 "+tr("expert");e.onclick=()=>{add(tr("sent",{id:"KS-"+Math.floor(1000+Math.random()*9000)}),false)};a.appendChild(e)}
+ d.appendChild(a);speak(speakText);return d}
+function context(){const w=W[$("wx").value],out=[];
+ if(w.rain>=60)out.push(tr("noSpray"),tr("win",{w:tr("w2")}));else if(w.wind>20)out.push(tr("wind"),tr("win",{w:tr("w2")}));else out.push(tr("win",{w:tr("w1")}));
+ return out}
+function soil(){if(!$("ss").checked)return[];const m=+$("sm").value;return[m<30?tr("dry",{m}):m>70?tr("wet",{m}):tr("okm",{m})]}
+// --- prototype screening: colour-pattern check on the photo (stand-in for MobileNet) ---
+function classify(img){const c=document.createElement("canvas");c.width=c.height=96;const x=c.getContext("2d");x.drawImage(img,0,0,96,96);
+ const d=x.getImageData(0,0,96,96).data;let G=0,Y=0,B=0,Gy=0,N=0;
+ for(let i=0;i<d.length;i+=4){const r=d[i],g=d[i+1],b=d[i+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),s=mx?(mx-mn)/mx:0;
+  if((mx>217&&s<.15)||mx<30)continue;N++;
+  if(g>=r&&g>=b&&s>.2)G++;else if(r>150&&g>120&&b<100&&Math.abs(r-g)<80)Y++;else if(r>g&&g>=b&&s>.25&&mx<200)B++;else if(s<.18&&mx>70)Gy++}
+ if(N<200||G/N<.12)return{k:"healthy",c:.4,none:1};
+ const les=(B+Y+Gy)/N,sc={healthy:1-Math.min(1,les*12),blast:Gy/N*10+B/N*2,brown:B/N*12,blb:Y/N*10};
+ const o=Object.entries(sc).sort((a,b)=>b[1]-a[1]);const t=o[0][1],s2=o[1][1];
+ return{k:o[0][0],c:Math.min(.93,Math.max(.4,.5+.43*(t-s2)/Math.max(t,.3)))}}
+async function run(img,src){const mp=STEPS.length;add("",true,src);
+ for(let i=0;i<mp;i++)mark(i,false);
+ for(const i of [0,1,2]){mark(i,true);await sleep(350)}
+ const r=classify(img),pct=Math.round(r.c*100),th=+$("th").value;
+ $("cb").style.width=pct+"%";$("cv").textContent=pct+"%";mark(3,true);await sleep(350);
+ if(pct<th){mark(5,true);bot(null,["<div class=gate>"+tr("low",{c:pct})+"</div>"],1,tr("low",{c:pct}),1);return}
+ mark(4,true);await sleep(350);
+ const nm=D[r.k][lang],head=tr("likely",{d:nm,c:pct}),ls=[ADV[r.k][lang]];
+ if(r.k!=="healthy")ls.push(...context());ls.push(...soil());
+ mark(5,true);bot(head,ls,0,head+". "+ls.join(" "),r.k!=="healthy")}
+function onFile(f){const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>run(im,rd.result);im.src=rd.result};rd.readAsDataURL(f)}
+// --- sample leaves ---
+function leaf(kind){const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");x.fillStyle="#e9e5d9";x.fillRect(0,0,256,256);
+ if(kind==="unclear"){x.fillStyle="#cfc9b8";x.fillRect(0,0,256,256);x.fillStyle="#6a9a52";x.beginPath();x.ellipse(128,128,30,12,.3,0,7);x.fill();return c}
+ x.save();x.translate(128,128);x.rotate(-.35);x.fillStyle="#4c9a3a";x.beginPath();x.ellipse(0,0,110,50,0,0,7);x.fill();x.strokeStyle="#8bc34a";x.lineWidth=3;x.beginPath();x.moveTo(-105,0);x.lineTo(105,0);x.stroke();
+ if(kind==="blast"){[[-60,-18],[-20,20],[20,-22],[55,14],[-85,12],[78,-8]].forEach(p=>{x.fillStyle="#bdbdb2";x.strokeStyle="#7a4a2a";x.lineWidth=1.5;x.beginPath();x.ellipse(p[0],p[1],15,6.5,.5,0,7);x.fill();x.stroke()})}
+ if(kind==="brown"){x.fillStyle="#7a3f1e";for(let i=0;i<42;i++){x.beginPath();x.arc(-95+(i*53%190),-34+(i*29%68),3.6,0,7);x.fill()}}
+ if(kind==="blb"){x.strokeStyle="#e0b92e";x.lineWidth=7;[-22,0,22].forEach(y=>{x.beginPath();x.moveTo(100,y*.4);x.lineTo(15,y*1.1);x.stroke()})}
+ x.restore();return c}
+[["blast","Blast"],["brown","Brown spot"],["blb","Leaf blight"],["healthy","Healthy"],["unclear","Blurry"]].forEach(s=>{const b=document.createElement("button");b.textContent=s[1];b.onclick=()=>{const c=leaf(s[0]);run(c,c.toDataURL())};$("smp").appendChild(b)});
+// --- text / voice questions ---
+function ask(q){q=q.trim();if(!q)return;add(q.replace(/</g,"&lt;"),true);
+ if(/rain|spray|water|irrig|wind|बारिश|छिड़काव|पानी|सिंचाई|ବର୍ଷା|ସ୍ପ୍ରେ|ପାଣି|ଜଳସେଚନ/i.test(q)){const ls=[...context(),...soil()];bot(null,ls,0,ls.join(" "))}
+ else bot(null,[tr("hint")],0,tr("hint"))}
+$("send").onclick=()=>{ask($("txt").value);$("txt").value=""};
+$("txt").onkeydown=e=>{if(e.key==="Enter")$("send").click()};
+$("file").onchange=e=>{if(e.target.files[0])onFile(e.target.files[0]);e.target.value=""};
+$("mic").onclick=()=>{const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R){toast("Voice input is not supported on this browser");return}
+ const r=new R();r.lang=L[lang].v;r.onresult=e=>ask(e.results[0][0].transcript);r.onerror=()=>toast("Could not hear that, please try again");r.start()};
+$("sm").oninput=()=>$("smv").textContent=$("sm").value+"%";
+$("th").oninput=()=>$("thv").textContent=$("th").value+"%";
+const lg=$("lang");Object.keys(L).forEach(k=>{const b=document.createElement("button");b.textContent=L[k].n;b.className=k===lang?"on":"";b.onclick=()=>{lang=k;[...lg.children].forEach(c=>c.classList.remove("on"));b.classList.add("on")};lg.appendChild(b)});
+add(T.greet.en,false);
+</script></body></html>
